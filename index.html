@@ -721,31 +721,31 @@ if (hasFinances) {
     checkPage(20);
     doc.autoTable({
       startY: y,
-      margin: { left: marginL, right: marginR },
-      head: [['Designation','Entrees (FCFA)','Don / Jayante','Sorties (FCFA)']],
-      body: d.finRows.map(r => [
-        n(r.label) || '',
+      margin:{left:marginL, right:marginR},
+      head:[['Designation','Entrees (FCFA)','Don / Jayante','Sorties (FCFA)']],
+      body: d.finRows.map(r=>[
+        n(r.label)||'',
         r.entree ? formatMontant(r.entree) : '',
-        n(r.jayante) || '',
+        n(r.jayante)||'',
         r.sortie ? formatMontant(r.sortie) : ''
       ]),
-      foot: [[
+      foot:[[
         'TOTAL',
         formatMontant(d.totalEntrees),
         '-',
         formatMontant(d.totalSorties)
-      ], [
+      ],[
         'SOLDE',
         formatMontant(d.solde),
         '',
         ''
       ]],
-      headStyles: { fillColor: NAVY, textColor: WHITE, fontSize: 8, fontStyle: 'bold' },
-      footStyles: { fillColor: [232,235,247], textColor: NAVY, fontSize: 9, fontStyle: 'bold' },
-      bodyStyles: { fontSize: 9 },
-      alternateRowStyles: { fillColor: LIGHT },
-      columnStyles: { 1: { halign: 'right' }, 3: { halign: 'right' } },
-      showFoot: 'lastPage',
+      headStyles:{fillColor:NAVY,textColor:WHITE,fontSize:8,fontStyle:'bold'},
+      footStyles:{fillColor:[232,235,247],textColor:NAVY,fontSize:9,fontStyle:'bold'},
+      bodyStyles:{fontSize:9},
+      alternateRowStyles:{fillColor:LIGHT},
+      columnStyles:{1:{halign:'right'},3:{halign:'right'}},
+      showFoot:'lastPage',
     });
     y = doc.lastAutoTable.finalY + 6;
   }
@@ -759,22 +759,22 @@ if (hasFinances) {
     y += 5;
     doc.autoTable({
       startY: y,
-      margin: { left: marginL, right: marginR },
-      head: [['Designation','Montant (FCFA)']],
-      body: d.decRows.map(r => [
-        n(r.label) || '',
+      margin:{left:marginL, right:marginR},
+      head:[['Designation','Montant (FCFA)']],
+      body: d.decRows.map(r=>[
+        n(r.label)||'',
         r.montant ? formatMontant(r.montant) : ''
       ]),
-      foot: [
+      foot:[
         ['Total decaissements', formatMontant(d.totalDec)],
         ['Restant Adiyah', formatMontant(d.adiyah)]
       ],
-      headStyles: { fillColor: [20,32,90], textColor: WHITE, fontSize: 8, fontStyle: 'bold' },
-      footStyles: { fillColor: [253,248,236], textColor: [13,26,58], fontSize: 9, fontStyle: 'bold' },
-      bodyStyles: { fontSize: 9 },
-      alternateRowStyles: { fillColor: LIGHT },
-      columnStyles: { 1: { halign: 'right' } },
-      showFoot: 'lastPage',
+      headStyles:{fillColor:[20,32,90],textColor:WHITE,fontSize:8,fontStyle:'bold'},
+      footStyles:{fillColor:[253,248,236],textColor:[13,26,58],fontSize:9,fontStyle:'bold'},
+      bodyStyles:{fontSize:9},
+      alternateRowStyles:{fillColor:LIGHT},
+      columnStyles:{1:{halign:'right'}},
+      showFoot:'lastPage',
     });
     y = doc.lastAutoTable.finalY + 8;
   }
