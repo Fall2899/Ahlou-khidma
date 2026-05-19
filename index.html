@@ -708,7 +708,7 @@ async function generatePDF() {
       if (!val) return '';
       // Supprime tout sauf les chiffres
       const cleaned = String(val).replace(/[^\d]/g, '');
-      if (cleaned === '') return val; // si rien à nettoyer, retourne brut
+      if (cleaned === '') return ''; // si rien à nettoyer, retourne brut
       return Number(cleaned)
         .toLocaleString('fr-FR')
         .replace(/\u202F/g, ' '); // espace normal
