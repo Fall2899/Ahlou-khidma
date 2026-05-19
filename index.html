@@ -808,7 +808,7 @@ async function generatePDF() {
     const hasCotis = d.cotisMontant||d.cotisPayes.length>0||d.cotisNote;
     if(hasCotis) {
       sectionTitle(sectionNum++, 'Cotisation');
-      if(d.cotisMontant) { bodyText('Montant par membre : '+ d.cotisMontant + ' FCFA'); gap(2); }
+      if(d.cotisMontant) { bodyText('Montant par membre : ' + d.cotisMontant +' FCFA'); gap(2); }
       if(d.cotisPayes.length>0) {
         label('Membres ayant cotise ('+d.cotisPayes.length+')');
         bodyText(d.cotisPayes.join(' — '));
