@@ -706,13 +706,13 @@ async function generatePDF() {
     // ── 3. FINANCES ──
     function formatMontant(val) {
       if (!val) return '';
-      if (!isNaN(val)) {
-        return Number(val)
-          .toLocaleString('fr-FR')
-          .replace(/\u202F/g, ' '); // corrige l’espace insécable
-      }
-      return val; // si ce n’est pas un nombre, affiche brut
-    }
+      // Supprime tout sauf les chiffres
+      const cleaned = String(val).replace(/[^\d]/g, '');
+      if (cleaned === '') return val; // si rien à nettoyer, retourne brut
+      return Number(cleaned)
+        .toLocaleString('fr-FR')
+        .replace(/\u202F/g, ' '); // espace normal
+  }
 const hasFinances = d.finRows.length > 0 || d.decRows.length > 0;
 if (hasFinances) {
   sectionTitle(sectionNum++, 'Situation financiere');
