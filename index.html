@@ -822,18 +822,41 @@ async function generatePDF() {
     }
 
     // ── 6. COTISATION ──
-    const hasCotis = d.cotisMontant||d.cotisPayes.length>0||d.cotisNote;
-    if(hasCotis) {
+    const hasCotis = d.cotisMontant || d.cotisPayes.length > 0 || d.cotisNote;
+    if (hasCotis) {
       sectionTitle(sectionNum++, 'Cotisation');
-      if(d.cotisMontant) { bodyText('Montant par membre : '+parseFloat(d.cotisMontant).toLocaleString('fr-FR')+' FCFA'); gap(2); }
-      if(d.cotisPayes.length>0) {
-        label('Membres ayant cotise ('+d.cotisPayes.length+')');
-        bodyText(d.cotisPayes.join(' — '));
-        gap(2);
-      }
-      if(d.cotisNote) { bodyText(d.cotisNote); gap(2); }
-      gap(4);
+
+      if (d.cotisMontant) {
+        // Vérifie si c’est bien un nombre
+        let montant;
+        if (!isNaN(d.cotisMontant)) {
+          // Formatage français avec séparateur de milliers
+          montant = Number(d.cotisMontant)
+            .toLocaleString('fr-FR')
+            .replace(/\u202F/g, ' '); // remplace l’espace insécable par un espace classique
+    } else {
+      // Si ce n’est pas un nombre, affiche brut
+      montant = d.cotisMontant;
     }
+
+    bodyText('Montant par membre : ' + montant + ' FCFA');
+    gap(2);
+  }
+
+  if (d.cotisPayes.length > 0) {
+    label('Membres ayant cotisé (' + d.cotisPayes.length + ')');
+    bodyText(d.cotisPayes.join(' — '));
+    gap(2);
+  }
+
+  if (d.cotisNote) {
+    bodyText(d.cotisNote);
+    gap(2);
+  }
+
+  gap(4);
+}
+
 
     // ── 7. SIGNATURES ──
     const hasSig = d.sigVille||d.sigDate||d.coord||d.dieuw;
