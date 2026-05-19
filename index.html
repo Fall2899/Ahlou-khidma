@@ -595,23 +595,23 @@ async function generatePDF() {
     doc.setFont('helvetica','bold');
     doc.setFontSize(18);
     doc.setTextColor(...WHITE);
-    doc.text('Ahlou Khidma', marginL+26, 14);
+    doc.text(n('Ahlou Khidma'), marginL+26, 14);
     doc.setFont('helvetica','italic');
     doc.setFontSize(10);
     doc.setTextColor(230,220,180);
-    doc.text('« Jaamu Yàlla ci Jaami Yàlla yi »', marginL+26, 21);
+    doc.text(n('Jaamu Yalla ci Jaami Yalla yi'), marginL+26, 21);
     // Titre document
     doc.setFont('helvetica','bold');
     doc.setFontSize(13);
     doc.setTextColor(...WHITE);
-    doc.text('COMPTE RENDU DE RÉUNION', W/2, 37, {align:'center'});
+    doc.text(n('COMPTE RENDU DE REUNION'), W/2, 37, {align:'center'});
     const dateStr = d.date ? new Date(d.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'}) : '';
     const lieuStr = d.lieu || '';
     if(dateStr||lieuStr) {
       doc.setFont('helvetica','normal');
       doc.setFontSize(9);
       doc.setTextColor(210,220,245);
-      doc.text((dateStr+(lieuStr?' — '+lieuStr:'')), W/2, 44, {align:'center'});
+      doc.text(n(dateStr+(lieuStr?' - '+lieuStr:'')), W/2, 44, {align:'center'});
     }
     y = 58;
 
@@ -624,7 +624,7 @@ async function generatePDF() {
       doc.setFont('helvetica','bold');
       doc.setFontSize(11);
       doc.setTextColor(...NAVY);
-      doc.text(num+'. '+title, marginL, y);
+      doc.text(n(num+'. '+title), marginL, y);
       doc.setDrawColor(...GOLD);
       doc.setLineWidth(0.5);
       doc.line(marginL, y+1.5, marginL+contentW, y+1.5);
@@ -634,14 +634,14 @@ async function generatePDF() {
       doc.setFont('helvetica','bold');
       doc.setFontSize(8);
       doc.setTextColor(...GRAY);
-      doc.text(txt.toUpperCase(), marginL, y);
+      doc.text(n(txt).toUpperCase(), marginL, y);
       y += 4;
     }
     function bodyText(txt, indent=0) {
       doc.setFont('helvetica','normal');
       doc.setFontSize(10);
       doc.setTextColor(...BLACK);
-      const lines = doc.splitTextToSize(txt, contentW-indent);
+      const lines = doc.splitTextToSize(n(txt), contentW-indent);
       lines.forEach(line => {
         checkPage(6);
         doc.text(line, marginL+indent, y);
@@ -655,9 +655,9 @@ async function generatePDF() {
     // ── 1. INFORMATIONS ──
     const hasInfo = d.date||d.lieu||d.ordre;
     if(hasInfo) {
-      sectionTitle(sectionNum++, 'Informations de la réunion');
+      sectionTitle(sectionNum++, 'Informations de la reunion');
       if(d.date||d.lieu) {
-        const infoLine = [d.date?'Date : '+dateStr:'', d.lieu?'Lieu : '+d.lieu:''].filter(Boolean).join('     ');
+        const infoLine = [d.date?'Date : '+dateStr:'', d.lieu?'Lieu : '+d.lieu:''].filter(Boolean).join('   ');
         bodyText(infoLine);
         gap(2);
       }
@@ -667,7 +667,7 @@ async function generatePDF() {
 
     // ── 2. PRÉSENCE ──
     if(d.presence.length > 0) {
-      sectionTitle(sectionNum++, 'Liste de présence ('+d.presence.length+' membres)');
+      sectionTitle(sectionNum++, 'Liste de presence ('+d.presence.length+' membres)');
       // Grille 3 colonnes
       const cols = 3;
       const colW = contentW/cols;
@@ -678,7 +678,7 @@ async function generatePDF() {
         doc.setFont('helvetica','normal');
         doc.setFontSize(10);
         doc.setTextColor(...BLACK);
-        doc.text('• '+name, marginL+col*colW, y);
+        doc.text(n('- '+name), marginL+col*colW, y);
         col++;
         if(col===cols){ col=0; y+=6; }
       });
@@ -689,25 +689,25 @@ async function generatePDF() {
     // ── 3. FINANCES ──
     const hasFinances = d.finRows.length>0||d.decRows.length>0;
     if(hasFinances) {
-      sectionTitle(sectionNum++, 'Situation financière');
+      sectionTitle(sectionNum++, 'Situation financiere');
       if(d.finRows.length > 0) {
         checkPage(20);
         doc.autoTable({
           startY: y,
           margin:{left:marginL, right:marginR},
-          head:[['Désignation','Entrées (FCFA)','Don / Jayanté','Sorties (FCFA)']],
+          head:[['Designation','Entrees (FCFA)','Don / Jayante','Sorties (FCFA)']],
           body: d.finRows.map(r=>[
-            r.label||'',
+            n(r.label)||'',
             r.entree?(parseFloat(r.entree)||0).toLocaleString('fr-FR'):'',
-            r.jayante||'',
+            n(r.jayante)||'',
             r.sortie?(parseFloat(r.sortie)||0).toLocaleString('fr-FR'):''
           ]),
           foot:[[
             'TOTAL',
             d.totalEntrees.replace(' FCFA',''),
-            '—',
+            '-',
             d.totalSorties.replace(' FCFA','')
-          ],['SOLDE', d.solde,'','']],
+          ],['SOLDE', d.solde.replace(' FCFA',''),'','']],
           headStyles:{fillColor:NAVY,textColor:WHITE,fontSize:8,fontStyle:'bold'},
           footStyles:{fillColor:[232,235,247],textColor:NAVY,fontSize:9,fontStyle:'bold'},
           bodyStyles:{fontSize:9},
@@ -723,15 +723,15 @@ async function generatePDF() {
         doc.setFont('helvetica','bold');
         doc.setFontSize(9);
         doc.setTextColor(...NAVY);
-        doc.text('Décaissements après activités', marginL, y);
+        doc.text(n('Decaissements apres activites'), marginL, y);
         y += 5;
         doc.autoTable({
           startY: y,
           margin:{left:marginL, right:marginR},
-          head:[['Désignation','Montant (FCFA)']],
-          body: d.decRows.map(r=>[r.label||'', r.montant?(parseFloat(r.montant)||0).toLocaleString('fr-FR'):'']),
+          head:[['Designation','Montant (FCFA)']],
+          body: d.decRows.map(r=>[n(r.label)||'', r.montant?(parseFloat(r.montant)||0).toLocaleString('fr-FR'):'']),
           foot:[
-            ['Total décaissements', d.totalDec.replace(' FCFA','')],
+            ['Total decaissements', d.totalDec.replace(' FCFA','')],
             ['Restant Adiyah', d.adiyah.replace(' FCFA','')]
           ],
           headStyles:{fillColor:[20,32,90],textColor:WHITE,fontSize:8,fontStyle:'bold'},
@@ -748,28 +748,28 @@ async function generatePDF() {
 
     // ── 4. ACTIVITÉS ──
     if(d.activites.length > 0) {
-      sectionTitle(sectionNum++, 'Compte rendu des activités');
+      sectionTitle(sectionNum++, 'Compte rendu des activites');
       d.activites.forEach((act, idx) => {
         checkPage(20);
         // Sous-titre activité
         doc.setFont('helvetica','bold');
         doc.setFontSize(10);
         doc.setTextColor(...NAVY);
-        doc.text((idx+1)+'. '+( act.nom||'Activité'), marginL, y);
+        doc.text(n((idx+1)+'. '+(act.nom||'Activite')), marginL, y);
         y += 5.5;
         if(act.notes) { bodyText(act.notes, 4); gap(1); }
         if(act.indicateur) {
           doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...GRAY);
-          doc.text('Indicateur : ', marginL+4, y);
+          doc.text(n('Indicateur : '), marginL+4, y);
           doc.setFont('helvetica','normal'); doc.setTextColor(...BLACK);
-          doc.text(act.indicateur, marginL+4+28, y);
+          doc.text(n(act.indicateur), marginL+4+28, y);
           y += 5;
         }
         if(act.deadline) {
           doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...GRAY);
-          doc.text('Prochaine étape : ', marginL+4, y);
+          doc.text(n('Prochaine etape : '), marginL+4, y);
           doc.setFont('helvetica','normal'); doc.setTextColor(...BLACK);
-          doc.text(act.deadline, marginL+4+38, y);
+          doc.text(n(act.deadline), marginL+4+38, y);
           y += 5;
         }
         gap(4);
@@ -779,7 +779,7 @@ async function generatePDF() {
 
     // ── 5. DÉCISIONS ──
     if(d.decisions.length > 0) {
-      sectionTitle(sectionNum++, 'Décisions');
+      sectionTitle(sectionNum++, 'Decisions');
       d.decisions.forEach((dec, i) => {
         checkPage(10);
         // Numéro
@@ -796,7 +796,7 @@ async function generatePDF() {
         const lines = doc.splitTextToSize(dec, contentW-10);
         lines.forEach((line,li) => {
           checkPage(6);
-          doc.text(line, marginL+9, li===0?y:y);
+          doc.text(n(line), marginL+9, li===0?y:y);
           if(li<lines.length-1) y+=5.5;
         });
         y += 6.5;
@@ -810,7 +810,7 @@ async function generatePDF() {
       sectionTitle(sectionNum++, 'Cotisation');
       if(d.cotisMontant) { bodyText('Montant par membre : '+parseFloat(d.cotisMontant).toLocaleString('fr-FR')+' FCFA'); gap(2); }
       if(d.cotisPayes.length>0) {
-        label('Membres ayant cotisé ('+d.cotisPayes.length+')');
+        label('Membres ayant cotise ('+d.cotisPayes.length+')');
         bodyText(d.cotisPayes.join(' — '));
         gap(2);
       }
@@ -828,7 +828,7 @@ async function generatePDF() {
         doc.setFont('helvetica','italic');
         doc.setFontSize(9);
         doc.setTextColor(...GRAY);
-        doc.text('Fait à '+(d.sigVille||'...')+' le '+sigDateStr, W-marginR, y, {align:'right'});
+        doc.text(n('Fait a '+(d.sigVille||'...')+' le '+sigDateStr), W-marginR, y, {align:'right'});
         y += 7;
       }
       // Blocs signatures
@@ -838,14 +838,14 @@ async function generatePDF() {
       doc.setDrawColor(...GRAY); doc.setLineWidth(0.4);
       doc.line(marginL, sigY, marginL+halfW-6, sigY);
       doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...BLACK);
-      doc.text('Le Coordonnateur', marginL + (halfW-6)/2, sigY+5, {align:'center'});
-      if(d.coord) { doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(d.coord, marginL+(halfW-6)/2, sigY+10, {align:'center'}); }
+      doc.text(n('Le Coordonnateur'), marginL + (halfW-6)/2, sigY+5, {align:'center'});
+      if(d.coord) { doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(n(d.coord), marginL+(halfW-6)/2, sigY+10, {align:'center'}); }
       // Dieuwrine
       const sig2X = marginL+halfW+6;
       doc.line(sig2X, sigY, sig2X+halfW-6, sigY);
       doc.setFont('helvetica','bold'); doc.setFontSize(9);
-      doc.text('Le Dieuwrine', sig2X+(halfW-6)/2, sigY+5, {align:'center'});
-      if(d.dieuw) { doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(d.dieuw, sig2X+(halfW-6)/2, sigY+10, {align:'center'}); }
+      doc.text(n('Le Dieuwrine'), sig2X+(halfW-6)/2, sigY+5, {align:'center'});
+      if(d.dieuw) { doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(n(d.dieuw), sig2X+(halfW-6)/2, sigY+10, {align:'center'}); }
       y = sigY + 18;
       // Hadiyya
       gap(6);
@@ -853,7 +853,7 @@ async function generatePDF() {
       doc.setFont('helvetica','bolditalic');
       doc.setFontSize(10);
       doc.setTextColor(...NAVY);
-      doc.text('SERIGNE ABDOU AZIZ MBACKE MAJALIS YAL NA FI YAGG TE WER', W/2, y, {align:'center'});
+      doc.text(n('SERIGNE ABDOU AZIZ MBACKE MAJALIS YAL NA FI YAGG TE WER'), W/2, y, {align:'center'});
       y += 8;
     }
 
@@ -864,7 +864,7 @@ async function generatePDF() {
       doc.setFont('helvetica','normal');
       doc.setFontSize(7);
       doc.setTextColor(...GRAY);
-      doc.text('Ahlou Khidma — Compte Rendu', marginL, 290);
+      doc.text(n('Ahlou Khidma - Compte Rendu'), marginL, 290);
       doc.text('Page '+p+' / '+pageCount, W-marginR, 290, {align:'right'});
     }
 
